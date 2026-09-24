@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Team 5 카드 공개 게임 화면 시안" />
+    <title>Team 5 | Walkout Preview</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --screen: #080a0e;
+        --stage: #10151b;
+        --panel: #151b22;
+        --card: #1a2430;
+        --ink: #f3f0e7;
+        --muted: rgba(243, 240, 231, .56);
+        --gold: #c9a65b;
+        --gold-light: #f0d792;
+        --gold-soft: rgba(240, 215, 146, .3);
+        --red: #7b3033;
+        --card-width: min(27vw, 330px);
+        font-family: "Avenir Next", Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      }
+
+      * { box-sizing: border-box; }
+      html, body { min-width: 320px; min-height: 100%; margin: 0; background: var(--screen); }
+      body { overflow: hidden; color: var(--ink); }
+      button { font: inherit; }
+
+      .game-screen { position: relative; min-height: 100dvh; overflow: hidden; isolation: isolate; background: radial-gradient(ellipse at 50% 38%, #25231e 0%, #151a20 30%, var(--screen) 70%); }
+      .game-screen::before { position: absolute; inset: 0; z-index: -2; content: ""; background: linear-gradient(90deg, rgba(5, 7, 9, .84), transparent 27%, transparent 73%, rgba(5, 7, 9, .84)), linear-gradient(180deg, rgba(5, 7, 9, .48), transparent 40%, rgba(5, 7, 9, .58)); }
+      .game-screen::after { position: absolute; inset: 0; z-index: 9; content: ""; pointer-events: none; background: radial-gradient(ellipse at center, transparent 38%, rgba(5, 7, 9, .7) 100%); }
+
+      .tunnel { position: absolute; inset: 0; z-index: -1; overflow: hidden; perspective: 900px; }
+      .tunnel-back { position: absolute; top: 18%; left: 50%; width: min(58vw, 820px); height: 58%; border: 1px solid rgba(240, 215, 146, .17); background: linear-gradient(90deg, rgba(11, 15, 20, .8), rgba(44, 42, 33, .22), rgba(11, 15, 20, .8)); transform: translateX(-50%) rotateX(10deg); }
+      .tunnel-back::before { position: absolute; inset: 9% 16%; border: 1px solid rgba(240, 215, 146, .14); content: ""; }
+      .tunnel-back::after { position: absolute; top: 11%; bottom: 8%; left: 50%; width: 1px; content: ""; background: linear-gradient(180deg, rgba(240, 215, 146, .2), transparent); }
+      .tunnel-side { position: absolute; top: 12%; bottom: 18%; width: 19%; border: 2px solid rgba(201, 166, 91, .3); background: linear-gradient(145deg, rgba(22, 28, 35, .7), rgba(7, 10, 13, .22)); }
+      .tunnel-side::before, .tunnel-side::after { position: absolute; content: ""; }
+      .tunnel-side::before { top: 13%; bottom: 5%; width: 2px; background: linear-gradient(180deg, var(--gold-light), transparent 76%); box-shadow: 0 0 18px rgba(240, 215, 146, .28); }
+      .tunnel-side::after { top: 10%; width: 47%; height: 2px; background: var(--gold-light); box-shadow: 0 0 16px rgba(240, 215, 146, .36); }
+      .tunnel-side-left { left: -6%; transform: skewY(-23deg); }
+      .tunnel-side-left::before { right: 18%; }
+      .tunnel-side-left::after { right: 9%; transform: rotate(16deg); }
+      .tunnel-side-right { right: -6%; transform: skewY(23deg); }
+      .tunnel-side-right::before { left: 18%; }
+      .tunnel-side-right::after { left: 9%; transform: rotate(-16deg); }
+      .tunnel-beam { position: absolute; top: 9%; width: 3px; height: 51%; background: linear-gradient(180deg, var(--gold-light), transparent); opacity: .52; }
+      .tunnel-beam-left { left: 25%; transform: rotate(14deg); }
+      .tunnel-beam-right { right: 25%; transform: rotate(-14deg); }
+      .tunnel-light { position: absolute; top: 12%; width: 18%; height: 9px; opacity: .62; background: repeating-linear-gradient(90deg, rgba(240, 215, 146, .16) 0 8px, rgba(240, 215, 146, .86) 9px 13px, rgba(240, 215, 146, .16) 14px 21px); filter: blur(.3px); }
+      .tunnel-light-left { left: 28%; transform: rotate(17deg); }
+      .tunnel-light-right { right: 28%; transform: rotate(-17deg); }
+      .tunnel-floor { position: absolute; right: -12%; bottom: -31%; left: -12%; height: 69%; transform: perspective(600px) rotateX(61deg); transform-origin: center top; background: repeating-linear-gradient(90deg, transparent 0 9.8%, rgba(201, 166, 91, .18) 9.9% 10.1%, transparent 10.2% 20%), repeating-linear-gradient(0deg, transparent 0 21%, rgba(201, 166, 91, .16) 21.1% 21.4%, transparent 21.5% 42%); mask-image: linear-gradient(180deg, transparent, black 15%, black 76%, transparent); }
+      .tunnel-haze { position: absolute; right: 20%; bottom: 15%; left: 20%; height: 37%; background: radial-gradient(ellipse, rgba(240, 215, 146, .15), transparent 69%); filter: blur(22px); }
+
+      .game-hud { position: absolute; top: 30px; right: 42px; left: 42px; z-index: 11; display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .18em; }
+      .hud-team { display: flex; align-items: center; gap: 12px; color: var(--ink); }
+      .hud-mark { display: grid; width: 29px; height: 29px; place-items: center; border: 1px solid var(--gold); color: var(--screen); background: var(--gold); font: italic 700 18px/.9 Georgia, serif; transform: skew(-8deg); }
+      .hud-pack { color: var(--gold-light); }
+
+      .walkout-ring { position: absolute; bottom: 23%; left: 50%; z-index: 1; width: min(49vw, 610px); aspect-ratio: 2.3; border: 2px solid rgba(240, 215, 146, .72); border-radius: 50%; box-shadow: 0 0 32px rgba(240, 215, 146, .18); transform: translateX(-50%) rotateX(62deg); }
+      .walkout-ring::after { position: absolute; inset: 18%; border: 1px solid rgba(240, 215, 146, .23); border-radius: inherit; content: ""; }
+
+      .deck-zone { position: absolute; top: 45%; left: 50%; z-index: 4; width: 560px; height: 570px; transform: translate(-50%, -50%); }
+      .deck-card { position: absolute; top: 50%; left: 50%; width: var(--card-width); aspect-ratio: 2 / 3; perspective: 1100px; transform: translate(-50%, -50%) translate(var(--stack-x), var(--stack-y)) rotate(var(--stack-rotate)); transition: transform .88s cubic-bezier(.16, 1, .3, 1), filter .6s ease; }
+      .card-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .82s cubic-bezier(.2, .8, .2, 1); }
+      .card-face { position: absolute; inset: 0; overflow: hidden; backface-visibility: hidden; clip-path: polygon(50% 0, 90% 7%, 100% 19%, 94% 93%, 50% 100%, 6% 93%, 0 19%, 10% 7%); }
+      .card-face::after { position: absolute; inset: 12px; border: 1px solid rgba(240, 215, 146, .58); clip-path: inherit; content: ""; pointer-events: none; }
+      .card-back { display: grid; place-items: center; color: var(--gold-light); background: radial-gradient(circle at 50% 51%, rgba(240, 215, 146, .11), transparent 23%), repeating-linear-gradient(135deg, rgba(255, 255, 255, .026) 0 1px, transparent 1px 12px), linear-gradient(145deg, #161d27, #0f151e 57%, #30291d); box-shadow: 0 25px 50px rgba(0, 0, 0, .52); }
+      .card-back::before { position: absolute; inset: 16%; border: 1px solid rgba(240, 215, 146, .28); border-radius: 50%; content: ""; transform: rotate(45deg); }
+      .card-back-mark { position: relative; z-index: 1; display: grid; gap: 17px; justify-items: center; }
+      .card-back-mark strong { font: italic 700 clamp(70px, 7vw, 100px)/.8 Georgia, serif; }
+      .card-back-mark span { font-size: 9px; font-weight: 800; letter-spacing: .25em; }
+      .card-front { display: flex; flex-direction: column; padding: 24px 23px 19px; color: #1b1b19; background: linear-gradient(146deg, #c7a35a, #f0d792 45%, #8f6c31); transform: rotateY(180deg); }
+      .front-top { display: flex; justify-content: space-between; font-weight: 900; }
+      .front-rating { font: italic 700 42px/.8 Georgia, serif; }
+      .front-position { padding-top: 7px; font: italic 700 21px/1 Georgia, serif; }
+      .front-art { display: grid; flex: 1; min-height: 0; place-items: center; margin: 14px 0 10px; border-bottom: 1px solid rgba(27, 27, 25, .35); }
+      .front-art img { width: 125%; height: 125%; object-fit: contain; filter: drop-shadow(0 12px 9px rgba(27, 27, 25, .36)); }
+      .front-name { padding: 9px 0 7px; border-bottom: 1px solid rgba(27, 27, 25, .35); text-align: center; }
+      .front-name strong { display: block; font-size: 23px; letter-spacing: -.08em; }
+      .front-name span { display: block; margin-top: 4px; font-size: 8px; }
+      .front-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px 4px; padding-top: 10px; font-size: 7px; font-weight: 900; text-align: center; }
+      .front-stats b { display: block; font: italic 700 12px/1 Georgia, serif; }
+      .front-stats span { display: block; margin-top: 3px; }
+      .deck-card-left { --stack-x: -14px; --stack-y: 14px; --stack-rotate: -5deg; z-index: 1; }
+      .deck-card-right { --stack-x: 14px; --stack-y: 10px; --stack-rotate: 5deg; z-index: 2; }
+      .deck-card-top { --stack-x: 0px; --stack-y: 0px; --stack-rotate: 0deg; z-index: 3; }
+      .deck-card-left.is-dealt { transform: translate(-50%, -50%) translate(-182px, 25px) rotate(-8deg); }
+      .deck-card-right.is-dealt { transform: translate(-50%, -50%) translate(182px, 25px) rotate(8deg); }
+      .deck-card-top.is-dealt { transform: translate(-50%, -50%) translate(0, -16px) rotate(0deg); }
+      .deck-card.is-dealt { filter: drop-shadow(0 28px 35px rgba(0, 0, 0, .56)); }
+      .deck-card.is-flipped .card-inner { transform: rotateY(180deg); }
+      .deck-card.is-walkout { animation: card-walkout .8s cubic-bezier(.2, .8, .2, 1) both; }
+
+      .game-status { position: absolute; bottom: 50px; left: 42px; z-index: 11; color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: .16em; }
+      .game-action { position: absolute; right: 42px; bottom: 39px; z-index: 11; display: flex; align-items: center; gap: 16px; }
+      .draw-button { min-width: 176px; min-height: 45px; padding: 0 22px; border: 1px solid var(--gold-light); border-radius: 3px; color: var(--ink); background: rgba(8, 10, 14, .74); box-shadow: inset 0 0 0 1px rgba(240, 215, 146, .12), 0 10px 26px rgba(0, 0, 0, .3); cursor: pointer; font-size: 12px; font-weight: 900; transition: background .2s ease, transform .2s ease, box-shadow .2s ease; }
+      .draw-button:hover { background: rgba(123, 48, 51, .72); box-shadow: 0 0 24px rgba(240, 215, 146, .18); transform: translateY(-2px); }
+      .draw-button:active { transform: translateY(1px) scale(.98); }
+      .draw-button:disabled { cursor: wait; opacity: .68; }
+      .action-hint { color: var(--muted); font-size: 8px; font-weight: 800; letter-spacing: .13em; }
+
+      @keyframes card-walkout {
+        0% { filter: brightness(1); }
+        38% { filter: brightness(1.55) drop-shadow(0 0 21px rgba(240, 215, 146, .62)); }
+        100% { filter: brightness(1); }
+      }
+
+      @media (max-width: 700px) {
+        :root { --card-width: min(39vw, 270px); }
+        .game-hud { top: 21px; right: 18px; left: 18px; font-size: 9px; letter-spacing: .12em; }
+        .hud-mark { width: 25px; height: 25px; font-size: 16px; }
+        .tunnel-back { width: 94vw; }
+        .tunnel-side { width: 25%; }
+        .tunnel-light { width: 25%; }
+        .deck-zone { top: 43%; width: 100vw; height: 440px; }
+        .deck-card-left.is-dealt { transform: translate(-50%, -50%) translate(-31vw, 20px) rotate(-8deg); }
+        .deck-card-right.is-dealt { transform: translate(-50%, -50%) translate(31vw, 20px) rotate(8deg); }
+        .card-front { padding: 17px 15px 14px; }
+        .front-rating { font-size: 31px; }
+        .front-position { font-size: 17px; }
+        .front-name strong { font-size: 18px; }
+        .front-stats { gap: 5px 2px; font-size: 5px; }
+        .front-stats b { font-size: 9px; }
+        .walkout-ring { width: 90vw; }
+        .game-status { right: 18px; bottom: 29px; left: auto; font-size: 8px; }
+        .game-action { right: auto; bottom: 64px; left: 50%; flex-direction: column; gap: 7px; transform: translateX(-50%); }
+        .action-hint { display: none; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .card-inner, .deck-card, .draw-button { transition: none; }
+        .deck-card.is-walkout { animation: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="game-screen" aria-label="Team 5 카드 공개 게임 화면 시안">
+      <div class="tunnel" aria-hidden="true">
+        <div class="tunnel-back"></div>
+        <div class="tunnel-side tunnel-side-left"></div>
+        <div class="tunnel-side tunnel-side-right"></div>
+        <div class="tunnel-beam tunnel-beam-left"></div>
+        <div class="tunnel-beam tunnel-beam-right"></div>
+        <div class="tunnel-light tunnel-light-left"></div>
+        <div class="tunnel-light tunnel-light-right"></div>
+        <div class="tunnel-floor"></div>
+        <div class="tunnel-haze"></div>
+      </div>
+
+      <header class="game-hud">
+        <div class="hud-team"><span class="hud-mark">5</span><span>TEAM 5</span></div>
+        <span class="hud-pack">PLAYER PACK</span>
+      </header>
+
+      <div class="walkout-ring" aria-hidden="true"></div>
+
+      <section class="deck-zone" aria-label="공개 전 카드 더미">
+        <article class="deck-card deck-card-left">
+          <div class="card-inner">
+            <div class="card-face card-back" aria-hidden="true"><div class="card-back-mark"><span>TEAM 5</span><strong>?</strong></div></div>
+            <div class="card-face card-front"><div class="front-top"><span class="front-rating">?</span><span class="front-position">CAM</span></div><div class="front-art"><span>김</span></div><div class="front-name"><strong>김영광</strong><span>TEAM 5 MEMBER</span></div><div class="front-stats"><span><b>?</b>PAC</span><span><b>?</b>SHO</span><span><b>?</b>PAS</span><span><b>?</b>DRI</span><span><b>?</b>DEF</span><span><b>?</b>PHY</span></div></div>
+          </div>
+        </article>
+        <article class="deck-card deck-card-right">
+          <div class="card-inner">
+            <div class="card-face card-back" aria-hidden="true"><div class="card-back-mark"><span>TEAM 5</span><strong>?</strong></div></div>
+            <div class="card-face card-front"><div class="front-top"><span class="front-rating">?</span><span class="front-position">CM</span></div><div class="front-art"><span>엄</span></div><div class="front-name"><strong>엄태웅</strong><span>TEAM 5 MEMBER</span></div><div class="front-stats"><span><b>?</b>PAC</span><span><b>?</b>SHO</span><span><b>?</b>PAS</span><span><b>?</b>DRI</span><span><b>?</b>DEF</span><span><b>?</b>PHY</span></div></div>
+          </div>
+        </article>
+        <article class="deck-card deck-card-top">
+          <div class="card-inner">
+            <div class="card-face card-back" aria-hidden="true"><div class="card-back-mark"><span>TEAM 5</span><strong>?</strong></div></div>
+            <div class="card-face card-front"><div class="front-top"><span class="front-rating">105</span><span class="front-position">CAM</span></div><div class="front-art"><img src="assets/yejin-orca.png" alt="범고래로 표현한 한예진" /></div><div class="front-name"><strong>한예진</strong><span>TEAM 5 MEMBER</span></div><div class="front-stats"><span><b>91</b>PAC</span><span><b>86</b>SHO</span><span><b>94</b>PAS</span><span><b>90</b>DRI</span><span><b>78</b>DEF</span><span><b>88</b>PHY</span></div></div>
+          </div>
+        </article>
+      </section>
+
+      <div class="game-status" aria-live="polite">3 CARDS READY</div>
+      <div class="game-action">
+        <button class="draw-button" type="button">카드 뽑기</button>
+        <span class="action-hint">CLICK TO OPEN</span>
+      </div>
+    </main>
+
+    <script>
+      const button = document.querySelector('.draw-button');
+      const status = document.querySelector('.game-status');
+      const cards = [
+        document.querySelector('.deck-card-top'),
+        document.querySelector('.deck-card-left'),
+        document.querySelector('.deck-card-right'),
+      ];
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let timers = [];
+      let isOpening = false;
+
+      const clearTimers = () => {
+        timers.forEach((timer) => window.clearTimeout(timer));
+        timers = [];
+      };
+
+      const reset = () => {
+        clearTimers();
+        isOpening = false;
+        cards.forEach((card) => card.classList.remove('is-dealt', 'is-flipped', 'is-walkout'));
+        button.disabled = false;
+        button.textContent = '카드 뽑기';
+        status.textContent = '3 CARDS READY';
+      };
+
+      button.addEventListener('click', () => {
+        if (isOpening) return;
+        if (button.textContent === '다시 뽑기') {
+          reset();
+          return;
+        }
+
+        isOpening = true;
+        button.disabled = true;
+        button.textContent = '카드가 나오는 중';
+        status.textContent = 'OPENING PACK';
+        const stepDelay = reduceMotion ? 0 : 820;
+        const firstDelay = reduceMotion ? 0 : 420;
+
+        cards.forEach((card, index) => {
+          timers.push(window.setTimeout(() => {
+            card.classList.add('is-dealt', 'is-flipped', 'is-walkout');
+            status.textContent = `${index + 1} CARD REVEALED`;
+            timers.push(window.setTimeout(() => card.classList.remove('is-walkout'), 800));
+          }, firstDelay + index * stepDelay));
+        });
+
+        timers.push(window.setTimeout(() => {
+          isOpening = false;
+          button.disabled = false;
+          button.textContent = '다시 뽑기';
+          status.textContent = '3 CARDS REVEALED';
+        }, firstDelay + 3 * stepDelay + 500));
+      });
+    </script>
+  </body>
+</html>

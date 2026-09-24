@@ -1,0 +1,61 @@
+name: Sync kanban status
+
+on:
+  issues:
+    types: [opened, reopened, closed]
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+
+# The workflow uses the repository owner's Project #1 and its default Status
+# field. Change these values if the board uses a different project or labels.
+# Create the PROJECT_TOKEN repository secret with the classic `project` scope
+# (and `repo` too when this repository is private). GITHUB_TOKEN cannot access
+# a user-owned Project v2.
+env:
+  PROJECT_OWNER: ${{ github.repository_owner }}
+  PROJECT_NUMBER: 1
+  PROJECT_STATUS_FIELD: Status
+  READY_STATUS: Ready
+  IN_PROGRESS_STATUS: In Progress
+  DONE_STATUS: Done
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  sync-issue:
+    if: github.event_name == 'issues'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Move issue to its matching status
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          ISSUE_NODE_ID: ${{ github.event.issue.node_id }}
+          TARGET_STATUS: ${{ github.event.action == 'closed' && env.DONE_STATUS || env.READY_STATUS }}
+        run: bash .github/scripts/sync-kanban-status.sh "$ISSUE_NODE_ID" "$TARGET_STATUS"
+
+  sync-linked-issues:
+    # Repository secrets are intentionally unavailable to pull requests from forks.
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Move issues linked by the pull request to In Progress
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        shell: bash
+        run: |
+          issue_node_ids="$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/closing_issues" --paginate --jq '.[].node_id')"
+          if [[ -z "$issue_node_ids" ]]; then
+            echo "No closing issues are linked to this pull request."
+            exit 0
+          fi
+
+          while IFS= read -r issue_node_id; do
+            bash .github/scripts/sync-kanban-status.sh "$issue_node_id" "$IN_PROGRESS_STATUS"
+          done <<< "$issue_node_ids"

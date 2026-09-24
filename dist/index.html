@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="팩을 열어 팀 5 멤버를 만나는 팀 소개" />
+    <meta name="theme-color" content="#05070b" />
+    <title>팀 5 | 멤버 팩</title>
+    <link rel="preload" href="assets/game/stadium-day-v1.png" as="image" />
+    <link rel="preload" href="assets/game/stadium-tunnel-v1.png" as="image" />
+    <link rel="preload" href="assets/game/team5-intro-bg-v1.png" as="image" />
+    <link rel="preload" href="assets/game/member-pack-v1.png" as="image" />
+    <link rel="preload" href="assets/game/team5-kanban-snapshot-v1.svg" as="image" />
+    <link rel="preload" href="assets/cards/taewoong-card-cutout-v2.png" as="image" />
+    <link rel="preload" href="assets/cards/youngkwang-card-cutout-v2.png" as="image" />
+    <link rel="preload" href="assets/cards/yejin-card-cutout-v2.png" as="image" />
+    <link rel="stylesheet" href="styles.css?v=team-scroll-20260915" />
+  </head>
+  <body>
+    <main id="experience" class="experience" data-scene="lobby">
+      <div class="arena-backdrop" aria-hidden="true">
+        <span class="arena-vignette"></span>
+        <span class="grain"></span>
+      </div>
+
+        <audio id="lobby-music" src="assets/audio/trimmed_32s_fadeout.mp3" preload="metadata" loop></audio>
+        <div id="sound-bar" class="sound-bar" role="group" aria-label="배경음악과 효과음 조절">
+          <button id="music-toggle" class="music-toggle" type="button" aria-label="전체 사운드 켜기" aria-pressed="false" title="전체 사운드 켜기">
+            <svg class="music-play" viewBox="0 0 20 20" aria-hidden="true"><path d="m7 4 9 6-9 6Z" fill="currentColor" /></svg>
+            <svg class="music-pause" viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4v12M14 4v12" stroke="currentColor" stroke-width="3" /></svg>
+          </button>
+          <svg class="music-speaker" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 8h3l4-4v12l-4-4H3Z" fill="currentColor" /><path d="M13 7a5 5 0 0 1 0 6m2-8a8 8 0 0 1 0 10" fill="none" stroke="currentColor" stroke-linecap="round" /></svg>
+          <input id="music-volume" type="range" min="0" max="100" step="1" value="25" aria-label="전체 사운드 볼륨" aria-valuetext="25%" title="볼륨 25%" />
+      </div>
+      <section id="lobby-view" class="scene scene-lobby" data-view="lobby" aria-label="팀 5 멤버 팩">
+        <div class="intro-art">
+          <img src="assets/game/team5-intro-bg-v1.png" alt="이 안에 3명 있음. TEAM 5 멤버 팩을 여는 소개 화면" draggable="false" />
+          <button id="open-pack" class="pack-trigger" type="button" aria-label="TEAM 5 멤버 팩 열기">
+            <img src="assets/game/member-pack-v1.png" alt="" draggable="false" />
+            <span class="pack-open-label">팩을 눌러 시작</span>
+          </button>
+        </div>
+      </section>
+
+      <section id="tunnel-view" class="scene scene-tunnel" data-view="tunnel" aria-live="polite" hidden>
+        <canvas id="tunnel-canvas" aria-hidden="true"></canvas>
+        <article id="hint-card" class="hint-card" hidden>
+          <strong id="hint-title"></strong>
+        </article>
+        <button id="skip-reveal" class="skip-button" type="button">연출 건너뛰기</button>
+      </section>
+
+      <section id="reveal-view" class="scene scene-reveal" data-view="reveal" aria-label="공개된 팀원 카드" hidden>
+        <button id="back-to-lobby" class="reveal-back" type="button">← 팩 선택</button>
+        <div id="gold-burst" class="gold-burst" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+        <div class="reveal-composition">
+          <div id="reveal-card" class="reveal-card-slot"></div>
+        </div>
+        <div class="reveal-actions">
+          <button id="next-pack" class="primary-action" type="button">다음 팩</button>
+        </div>
+      </section>
+
+      <section id="home-view" class="scene scene-home" data-view="home" aria-label="Team 5 협업 과정" hidden>
+        <div class="home-shell">
+          <header class="home-header">
+            <button id="home-restart" class="home-restart" type="button">← 팩 다시 열기</button>
+          </header>
+
+          <section class="kanban-showcase" aria-labelledby="kanban-title">
+            <div class="kanban-copy">
+              <h2 id="kanban-title">협업 과정</h2>
+              <a class="kanban-link" href="https://github.com/users/beyejin/projects/1" target="_blank" rel="noreferrer">GitHub 보드 보기 ↗</a>
+            </div>
+            <div id="kanban-board" class="kanban-board" aria-live="polite" aria-busy="true">
+              <p class="kanban-loading">Supabase에서 작업 보드를 불러오는 중…</p>
+            </div>
+            <a id="kanban-fallback" class="kanban-preview" href="https://github.com/users/beyejin/projects/1" target="_blank" rel="noreferrer" aria-label="실제 Team 5 GitHub 칸반 보드 열기">
+              <img src="assets/game/team5-kanban-snapshot-v1.svg" alt="Team 5 GitHub 칸반 보드 스냅샷. Backlog, Ready, In Progress, Done 열로 구성되어 있습니다." loading="lazy" />
+            </a>
+          </section>
+
+          <section class="collab-proof" aria-label="협업 기록">
+            <a class="collab-proof-item" href="https://github.com/beyejin/team5-study-mate/tree/main/.github/workflows" target="_blank" rel="noreferrer">
+              <strong>GitHub Actions</strong>
+              <span>테스트와 배포 자동화</span>
+            </a>
+            <a class="collab-proof-item" href="https://github.com/beyejin/team5-study-mate/blob/main/GIT_GUIDE.md" target="_blank" rel="noreferrer">
+              <strong>가이드 문서</strong>
+              <span>브랜치와 PR 작업 기준</span>
+            </a>
+          </section>
+
+          <footer class="home-links" aria-label="Team 5 작업 자료">
+            <a href="https://beyejin.github.io/team5-study-mate/" target="_blank" rel="noreferrer">GitHub Pages ↗</a>
+            <a href="https://github.com/beyejin/team5-study-mate" target="_blank" rel="noreferrer">GitHub 저장소 ↗</a>
+            <a href="https://github.com/beyejin/team5-study-mate/milestone/1" target="_blank" rel="noreferrer">마일스톤 ↗</a>
+            <a class="site-qr" href="https://beyejin.github.io/team5-study-mate/" target="_blank" rel="noreferrer" aria-label="Team 5 사이트를 QR 코드로 열기">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&amp;margin=1&amp;data=https%3A%2F%2Fbeyejin.github.io%2Fteam5-study-mate%2F" alt="beyejin.github.io/team5-study-mate 접속 QR 코드" loading="lazy" />
+              <span>사이트 바로 열기</span>
+            </a>
+          </footer>
+        </div>
+      </section>
+
+      <section id="collection-view" class="scene scene-collection" data-view="collection" aria-label="공개된 팀원 카드" hidden>
+        <button id="restart-pack" class="collection-back" type="button">← 팩 선택</button>
+        <div id="collection-cards" class="collection-cards" role="group" aria-label="팀 5 팀원 카드"></div>
+      </section>
+
+      <div id="white-flash" class="white-flash" aria-hidden="true"></div>
+      <p id="announcement" class="sr-only" aria-live="assertive"></p>
+    </main>
+
+    <script type="module" src="script.js?v=pack-click-fix-20260915"></script>
+  </body>
+</html>

@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" role="img" aria-labelledby="title description">
+  <title id="title">Team 5 과제 보드 스냅샷</title>
+  <desc id="description">Backlog, Ready, In Progress, Done 네 개 열에서 Team 5 과제를 관리하는 칸반보드 이미지</desc>
+  <defs>
+    <linearGradient id="surface" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#18242b"/>
+      <stop offset="1" stop-color="#0b1116"/>
+    </linearGradient>
+    <linearGradient id="header" x1="0" y1="0" x2="1" y2="0">
+      <stop stop-color="#21333a"/>
+      <stop offset="1" stop-color="#17242a"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#e4c06d"/>
+      <stop offset="1" stop-color="#8bbfc1"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="28" stdDeviation="24" flood-color="#020609" flood-opacity=".6"/>
+    </filter>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="28"/>
+    </filter>
+  </defs>
+
+  <rect width="1440" height="900" rx="48" fill="#060b0f"/>
+  <ellipse cx="1180" cy="104" rx="320" ry="200" fill="#4b9c96" opacity=".16" filter="url(#soft)"/>
+  <ellipse cx="220" cy="800" rx="310" ry="210" fill="#b78a35" opacity=".1" filter="url(#soft)"/>
+
+  <g filter="url(#shadow)">
+    <rect x="54" y="52" width="1332" height="796" rx="27" fill="url(#surface)" stroke="#587077" stroke-opacity=".62"/>
+    <path d="M54 79c0-15 12-27 27-27h1278c15 0 27 12 27 27v86H54z" fill="url(#header)"/>
+    <path d="M54 165h1332" stroke="#6a8589" stroke-opacity=".55"/>
+
+    <circle cx="102" cy="108" r="9" fill="#e6bf65"/>
+    <circle cx="132" cy="108" r="9" fill="#82c3bf" opacity=".9"/>
+    <circle cx="162" cy="108" r="9" fill="#dce5d7" opacity=".75"/>
+    <text x="208" y="100" fill="#f5f0df" font-family="Arial, sans-serif" font-size="24" font-weight="700">Team 5 팀 소개 보드</text>
+    <text x="208" y="129" fill="#aabdc0" font-family="Arial, sans-serif" font-size="15">PROJECT / KANBAN VIEW</text>
+
+    <rect x="1108" y="89" width="204" height="40" rx="20" fill="#0e181d" stroke="#76969a" stroke-opacity=".65"/>
+    <circle cx="1133" cy="109" r="6" fill="#86d0c8"/>
+    <text x="1150" y="115" fill="#dcebe7" font-family="Arial, sans-serif" font-size="14" font-weight="700">TEAM 5 ACTIVE</text>
+
+    <g transform="translate(84 204)">
+      <g>
+        <rect width="294" height="580" rx="18" fill="#0b151a" stroke="#536d71" stroke-opacity=".44"/>
+        <rect width="294" height="70" rx="18" fill="#132229"/>
+        <circle cx="31" cy="35" r="7" fill="#849da0"/>
+        <text x="50" y="42" fill="#eef2e6" font-family="Arial, sans-serif" font-size="22" font-weight="700">Backlog</text>
+        <text x="247" y="42" fill="#90aaac" font-family="Arial, sans-serif" font-size="16">06</text>
+        <g transform="translate(17 91)">
+          <rect width="260" height="117" rx="12" fill="#16242a" stroke="#4c656a" stroke-opacity=".58"/>
+          <rect x="16" y="16" width="46" height="21" rx="10" fill="#564a2b"/>
+          <text x="25" y="31" fill="#f0d779" font-family="Arial, sans-serif" font-size="11" font-weight="700">ISSUE 03</text>
+          <text x="16" y="64" fill="#f0f2e9" font-family="Arial, sans-serif" font-size="16" font-weight="700">팀원 자기소개 내용 취합</text>
+          <text x="16" y="91" fill="#a8b9bb" font-family="Arial, sans-serif" font-size="13">공개 가능한 소개와 자료 정리</text>
+        </g>
+        <g transform="translate(17 222)">
+          <rect width="260" height="117" rx="12" fill="#16242a" stroke="#4c656a" stroke-opacity=".58"/>
+          <rect x="16" y="16" width="46" height="21" rx="10" fill="#1e4a4b"/>
+          <text x="25" y="31" fill="#a9e4dc" font-family="Arial, sans-serif" font-size="11" font-weight="700">ISSUE 08</text>
+          <text x="16" y="64" fill="#f0f2e9" font-family="Arial, sans-serif" font-size="16" font-weight="700">피드백 의견 추가</text>
+          <text x="16" y="91" fill="#a8b9bb" font-family="Arial, sans-serif" font-size="13">예진 프로토타입 기준 검토</text>
+        </g>
+        <rect x="17" y="353" width="260" height="44" rx="10" fill="#111c21"/>
+        <text x="33" y="381" fill="#8facaf" font-family="Arial, sans-serif" font-size="14">+ 추가 아이디어</text>
+      </g>
+
+      <g transform="translate(314)">
+        <rect width="294" height="580" rx="18" fill="#0b171b" stroke="#536d71" stroke-opacity=".44"/>
+        <rect width="294" height="70" rx="18" fill="#143034"/>
+        <circle cx="31" cy="35" r="7" fill="#79c6c1"/>
+        <text x="50" y="42" fill="#eef2e6" font-family="Arial, sans-serif" font-size="22" font-weight="700">Ready</text>
+        <text x="247" y="42" fill="#a5d8d1" font-family="Arial, sans-serif" font-size="16">01</text>
+        <g transform="translate(17 91)">
+          <rect width="260" height="136" rx="12" fill="#16282c" stroke="#5c8686" stroke-opacity=".62"/>
+          <rect x="16" y="16" width="46" height="21" rx="10" fill="#1f5955"/>
+          <text x="25" y="31" fill="#b3eee5" font-family="Arial, sans-serif" font-size="11" font-weight="700">ISSUE 04</text>
+          <text x="16" y="64" fill="#f0f2e9" font-family="Arial, sans-serif" font-size="15" font-weight="700">자기소개 템플릿 작성</text>
+          <text x="16" y="86" fill="#f0f2e9" font-family="Arial, sans-serif" font-size="15" font-weight="700">및 팀원 안내</text>
+          <text x="16" y="113" fill="#a8b9bb" font-family="Arial, sans-serif" font-size="13">intro/&lt;이름&gt; 브랜치 준비</text>
+        </g>
+      </g>
+
+      <g transform="translate(628)">
+        <rect width="294" height="580" rx="18" fill="#0b191c" stroke="#536d71" stroke-opacity=".44"/>
+        <rect width="294" height="70" rx="18" fill="#17343a"/>
+        <circle cx="31" cy="35" r="7" fill="#e1b75a"/>
+        <text x="50" y="42" fill="#eef2e6" font-family="Arial, sans-serif" font-size="22" font-weight="700">In Progress</text>
+        <text x="247" y="42" fill="#e8cd86" font-family="Arial, sans-serif" font-size="16">01</text>
+        <g transform="translate(17 91)">
+          <rect width="260" height="136" rx="12" fill="#192a2d" stroke="#718783" stroke-opacity=".66"/>
+          <rect x="16" y="16" width="46" height="21" rx="10" fill="#5e4f28"/>
+          <text x="25" y="31" fill="#f2d97f" font-family="Arial, sans-serif" font-size="11" font-weight="700">ISSUE 02</text>
+          <text x="16" y="64" fill="#f0f2e9" font-family="Arial, sans-serif" font-size="16" font-weight="700">팀원 소개 홈페이지 만들기</text>
+          <text x="16" y="91" fill="#a8b9bb" font-family="Arial, sans-serif" font-size="13">작업 내용 확인 후 Pull Request</text>
+          <rect x="16" y="105" width="83" height="17" rx="8" fill="#225453"/>
+          <text x="27" y="118" fill="#a9e5dd" font-family="Arial, sans-serif" font-size="10" font-weight="700">IN PROGRESS</text>
+        </g>
+      </g>
+
+      <g transform="translate(942)">
+        <rect width="294" height="580" rx="18" fill="#101917" stroke="#536d71" stroke-opacity=".44"/>
+        <rect width="294" height="70" rx="18" fill="#26352c"/>
+        <circle cx="31" cy="35" r="7" fill="#d8cb90"/>
+        <text x="50" y="42" fill="#eef2e6" font-family="Arial, sans-serif" font-size="22" font-weight="700">Done</text>
+        <text x="247" y="42" fill="#d9d29c" font-family="Arial, sans-serif" font-size="16">04</text>
+        <g transform="translate(17 91)">
+          <rect width="260" height="117" rx="12" fill="#1d2923" stroke="#718171" stroke-opacity=".58"/>
+          <rect x="16" y="16" width="47" height="21" rx="10" fill="#506139"/>
+          <text x="25" y="31" fill="#d7e5aa" font-family="Arial, sans-serif" font-size="11" font-weight="700">DONE 01</text>
+          <text x="16" y="64" fill="#f0f2e9" font-family="Arial, sans-serif" font-size="16" font-weight="700">팀원 소개 README 초안</text>
+          <text x="16" y="91" fill="#a8b9bb" font-family="Arial, sans-serif" font-size="13">저장소 기본 구조 정리</text>
+        </g>
+        <g transform="translate(17 222)">
+          <rect width="260" height="117" rx="12" fill="#1d2923" stroke="#718171" stroke-opacity=".58"/>
+          <rect x="16" y="16" width="47" height="21" rx="10" fill="#506139"/>
+          <text x="25" y="31" fill="#d7e5aa" font-family="Arial, sans-serif" font-size="11" font-weight="700">DONE 05</text>
+          <text x="16" y="64" fill="#f0f2e9" font-family="Arial, sans-serif" font-size="16" font-weight="700">Git 실습과 보드 관리</text>
+          <text x="16" y="91" fill="#a8b9bb" font-family="Arial, sans-serif" font-size="13">팀원별 작업 흐름 확인</text>
+        </g>
+      </g>
+    </g>
+
+    <path d="M84 808h1236" stroke="url(#shine)" stroke-opacity=".65"/>
+    <text x="84" y="832" fill="#9eb7b7" font-family="Arial, sans-serif" font-size="14">TEAM 5 PROJECT SNAPSHOT</text>
+    <text x="1130" y="832" fill="#d7c68b" font-family="Arial, sans-serif" font-size="14" font-weight="700">WORK IN MOTION</text>
+  </g>
+</svg>
