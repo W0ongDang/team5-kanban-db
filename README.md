@@ -1,127 +1,149 @@
-# TEAM 5 | 멤버 팩
+# Team 5 Kanban DB 설계
 
-> 팩을 열고 힌트를 따라가며 세 명의 팀원을 한 명씩 발견하는 인터랙티브 팀 소개 페이지입니다.
+> GitHub Projects의 칸반 보드를 분석해 Supabase PostgreSQL 관계형 DB로 재구성한 데이터베이스 과제입니다.
 
-[GitHub Pages 데모](https://beyejin.github.io/team5-study-mate/) | [GitHub 저장소](https://github.com/beyejin/team5-study-mate)
+<p>
+  <img src="https://img.shields.io/badge/DB-Supabase_PostgreSQL-3ECF8E?logo=supabase&logoColor=white" alt="Supabase PostgreSQL" />
+  <img src="https://img.shields.io/badge/Schema-3_tables-2f6feb" alt="3 tables" />
+  <img src="https://img.shields.io/badge/Security-RLS_enabled-238636" alt="RLS enabled" />
+  <img src="https://img.shields.io/badge/Sample_data-6_cards-f0b429" alt="6 sample cards" />
+</p>
 
-> **DB 과제 제출 문서**: [TEAM 5 Kanban DB 보기](docs/kanban-db-project.md) · [개념 ERD](docs/kanban-erd.md)
+## 1. 프로젝트 목표
 
-![TEAM 5 멤버 팩 시작 화면](./assets/game/team5-intro-v2.png)
+기존 GitHub Project 보드에는 `Backlog`, `Ready`, `In Progress`, `Done` 열과 여러 작업 카드가 표시됩니다. 화면 정보를 한 테이블에 복사하지 않고, 반복 데이터와 관계를 분리해 보드·상태 열·작업 카드를 관리할 수 있는 DB를 설계했습니다.
 
-## 발표 한 문장
+- 한 보드에는 어떤 상태 열이 있는가?
+- 각 카드는 어느 보드와 어느 열에 속하는가?
+- 열과 카드의 표시 순서를 어떻게 유지하는가?
+- 공개 페이지에서는 어디까지 조회를 허용할 것인가?
 
-Team 5는 자기소개를 목록으로 보여주는 대신, 멤버 팩을 열고 힌트를 따라가며 팀원을 발견하는 경험으로 바꿨습니다.
+원본: [Team 5 GitHub Project](https://github.com/users/beyejin/projects/1)
 
-## 발표 구성
+## 2. 원본 데이터 분석과 정규화
 
-발표는 인트로 소개, 팀원별 30초 자기소개, 협업 방식 소개 순서로 진행합니다.
-
-1. **인트로 소개**: Team 5와 멤버 팩의 기획 의도를 설명합니다.
-2. **김영광 자기소개 30초**: 팩을 열고 힌트를 확인한 뒤 카드와 자기소개를 소개합니다.
-3. **엄태웅 자기소개 30초**: 다음 팩으로 바로 이어서 카드와 자기소개를 소개합니다.
-4. **한예진 자기소개 30초**: 마지막 팀원 카드와 자기소개를 소개합니다.
-5. **협업 방식 소개**: 세 명의 공개가 끝난 뒤 칸반 보드, GitHub Actions, 가이드 문서를 보여줍니다.
-
-## 핵심 구현
-
-- 팀원 세 명을 중복 없이 한 번씩 공개합니다.
-- 세 단계 힌트를 팀원별 Markdown 원본에서 읽습니다.
-- 카드 공개 후 발표자가 팀원 자기소개를 말로 이어갑니다.
-- 마지막 화면에는 칸반 보드와 실제 협업 기록만 간결하게 보여줍니다.
-- GitHub Actions로 테스트와 배포를 자동화하고, `GIT_GUIDE.md`로 브랜치와 PR 작업 기준을 공유합니다.
-- 첫 화면 효과음, 힌트 사운드, 카드 공개 사운드를 제공합니다.
-- `Escape`와 `연출 건너뛰기`로 공개 연출을 건너뛸 수 있습니다.
-
-## 팀원 소개
-
-| 순서 | 팀원 | 자기소개 원본 |
+| GitHub 보드에서 관찰한 정보 | DB Entity | 분리한 이유 |
 | --- | --- | --- |
-| 01 | 김영광 | [김영광.md](./team/김영광.md) |
-| 02 | 엄태웅 | [엄태웅.md](./team/엄태웅.md) |
-| 03 | 한예진 | [한예진.md](./team/한예진.md) |
+| Team 5 작업 보드 | `kanban_boards` | 보드 이름·원본 URL·공개 여부를 한 번만 저장 |
+| Backlog / Ready / In Progress / Done | `kanban_columns` | 보드별 상태 열과 표시 순서 관리 |
+| Issue 번호, 제목, 설명, 우선순위 | `kanban_cards` | 실제 작업 단위와 현재 상태 열 연결 |
 
-홈페이지는 자기소개 원본을 `team/*.md`에서 읽습니다. 내용을 수정한 뒤 로컬 서버를 새로고침하면 화면에 반영됩니다.
+초기에는 아래처럼 한 행에 저장하는 방법도 생각할 수 있습니다.
 
-## 팀원 자기소개 작성 안내
+| board_name | column_name | issue_number | title | position |
+| --- | --- | ---: | --- | ---: |
+| Team 5 보드 | Backlog | 3 | 팀원 자기소개 내용 취합 | 0 |
 
-모든 팀원은 [자기소개 템플릿](./team/TEMPLATE.md)을 기준으로 자신의 Markdown 파일을 작성합니다.
+그러나 보드명·열 이름이 카드 수만큼 반복되고, 열 순서가 바뀌면 여러 행을 수정해야 합니다. 그래서 Board–Column–Card 구조로 분리했습니다.
 
-```bash
-git switch -c intro/<이름>
-cp team/TEMPLATE.md team/<이름>.md
+## 3. Conceptual ERD
+
+```mermaid
+erDiagram
+    KANBAN_BOARDS ||--|{ KANBAN_COLUMNS : "has"
+    KANBAN_BOARDS ||--|{ KANBAN_CARDS : "owns"
+    KANBAN_COLUMNS ||--|{ KANBAN_CARDS : "contains"
+
+    KANBAN_BOARDS {
+        uuid id PK
+        text name
+        text source_url UK
+        boolean is_public
+        timestamptz created_at
+    }
+    KANBAN_COLUMNS {
+        uuid id PK
+        uuid board_id FK
+        text name
+        int position
+        text color
+    }
+    KANBAN_CARDS {
+        uuid id PK
+        uuid board_id FK
+        uuid column_id FK
+        int github_issue_number
+        text title
+        text description
+        text priority
+        int position
+        timestamptz created_at
+    }
 ```
 
-이미 파일이 있다면 복사하지 말고 해당 파일을 열어 아래 항목을 채웁니다.
+- Board 1 : N Column — 하나의 보드는 여러 상태 열을 가집니다.
+- Board 1 : N Card — 하나의 보드는 여러 작업 카드를 가집니다.
+- Column 1 : N Card — 하나의 열에는 여러 카드가 놓입니다.
 
-- 프로필 카드: 이미지, KAI 점수, MBTI, 태그
-- 한 줄 소개
-- 관심 분야
-- 요즘 배우는 것
-- 팀원들에게 보여주고 싶은 모습
-- 나를 표현하는 키워드
-- 공개해도 되는 GitHub 링크
+## 4. 테이블 구성 요소
 
-작성 후에는 다음 순서로 팀에 공유합니다.
+| 테이블 | 주요 컬럼 | 역할 |
+| --- | --- | --- |
+| `kanban_boards` | `id`, `name`, `source_url`, `is_public` | 간반 보드의 최상위 단위 |
+| `kanban_columns` | `id`, `board_id`, `name`, `position`, `color` | 보드 내부 상태 열과 열 순서 |
+| `kanban_cards` | `id`, `board_id`, `column_id`, `github_issue_number`, `title`, `priority`, `position` | 작업 카드와 현재 위치 |
 
-```bash
-git add team/<이름>.md
-git commit -m "docs: 자기소개 작성"
-git push -u origin intro/<이름>
-```
+### `kanban_boards`
 
-전화번호, 개인 이메일처럼 공개하지 않을 정보는 넣지 않습니다.
+- `source_url`은 원본 GitHub Project 링크이며 `UNIQUE`입니다.
+- `is_public`은 발표용 공개 보드를 판별합니다.
 
-## 협업 흐름
+### `kanban_columns`
 
-```text
-Clone → Branch → Markdown 작성 → Commit → Push → Pull Request → Review → Merge → Actions 배포
-```
+- `board_id`는 `kanban_boards.id`를 참조합니다.
+- `position`은 왼쪽부터 보이는 열의 순서이며 `0 이상`만 허용합니다.
+- `UNIQUE(board_id, position)`으로 같은 보드에서 열 순서가 겹치지 않게 했습니다.
 
-- [팀원용 Git 실습 가이드](./GIT_GUIDE.md)
-- [팀원 실행 및 Git 최소 흐름 안내](./RUN_GUIDE.md)
-- [화면 캡처 폴더](./docs/screenshots/)
+### `kanban_cards`
 
-## 발표용 실행 방법
+- `column_id`는 카드의 현재 칸반 상태를 나타냅니다. 카드를 이동할 때 이 값만 변경합니다.
+- `github_issue_number`는 원본 Issue 번호이며 `UNIQUE(board_id, github_issue_number)`으로 중복 저장을 막았습니다.
+- `priority`는 `low`, `normal`, `high`만 허용합니다.
+- `position`은 같은 열 안에서의 카드 표시 순서입니다.
 
-Markdown 프로필을 화면에 불러오기 위해 정적 서버로 실행합니다.
+## 5. 무결성 규칙
 
-```bash
-python3 -m http.server 8000
-```
+| 규칙 | 적용 방식 | 목적 |
+| --- | --- | --- |
+| 보드 삭제 시 하위 데이터 정리 | `ON DELETE CASCADE` | 고아 Column/Card 방지 |
+| 카드 소속 관계 보장 | `board_id`, `column_id` 외래키 | 잘못된 참조 방지 |
+| 열/카드 순서 음수 방지 | `CHECK (position >= 0)` | 화면 정렬 데이터 보호 |
+| 우선순위 오입력 방지 | `CHECK` | 허용값만 저장 |
+| Issue 중복 방지 | 복합 `UNIQUE` | 같은 카드의 중복 적재 방지 |
 
-브라우저에서 [http://localhost:8000](http://localhost:8000)을 열고 다음 순서로 시연합니다.
+## 6. 샘플 데이터
 
-```text
-인트로 소개 → 팩 선택 → 팀원별 30초 자기소개 → 세 명 공개 → 협업 방식 소개
-```
+실제 Team 5 보드에서 확인한 상태 열 4개와 카드 6개를 Supabase에 입력했습니다.
 
-## 사용 기술
+| 상태 열 | Issue | 작업 카드 |
+| --- | ---: | --- |
+| Backlog | #3 | 팀원 자기소개 내용 취합 |
+| Backlog | #8 | 피드백 의견 추가 |
+| Ready | #4 | 자기소개 템플릿 작성 및 팀원 안내 |
+| In Progress | #2 | 팀원 소개 홈페이지 만들기 |
+| Done | #1 | 팀원 소개 README 초안 |
+| Done | #5 | Git 실습과 보드 관리 |
 
-- HTML
-- CSS
-- JavaScript ES Modules
-- Markdown 기반 프로필 데이터
-- Web Audio API 기반 사운드
-- GitHub Pages
+## 7. Supabase 보안 구성
 
-## 주요 파일
+세 간반 테이블은 모두 Row Level Security(RLS)를 활성화했습니다.
 
-```text
-.
-├── index.html          # 로비, 터널, 카드 공개, 작업 방식 화면
-├── styles.css          # 경기장, 터널, 카드와 스카우팅 리포트 스타일
-├── script.js           # 팩 공개 흐름과 화면 전환
-├── profiles.mjs        # 팀원 Markdown 파싱
-├── team/               # 팀원 자기소개 원본
-├── assets/             # 카드, 경기장, 사운드 자산
-├── tests/              # 프로필, 공개 흐름, 사운드 테스트
-└── dist/               # 정적 배포 산출물
-```
+- `anon`, `authenticated` 역할에는 공개 보드의 `SELECT`만 허용
+- 브라우저에는 공개용 anon 키만 사용
+- `INSERT`, `UPDATE`, `DELETE`는 공개 페이지에서 허용하지 않음
+- `service_role` 키는 저장소와 브라우저 코드에 포함하지 않음
 
-## 관련 링크
+## 8. 구현 및 검증
 
-- [발표용 GitHub Pages](https://beyejin.github.io/team5-study-mate/)
-- [GitHub 저장소](https://github.com/beyejin/team5-study-mate)
-- [Team 5 과제 보드](https://github.com/users/beyejin/projects/1)
-- [과제 결과물 마일스톤](https://github.com/beyejin/team5-study-mate/milestone/1)
-- [자기소개 템플릿](./team/TEMPLATE.md)
+정적 페이지는 Supabase REST API로 `kanban_boards` → `kanban_columns` → `kanban_cards` 순서로 데이터를 조회해 렌더링합니다.
+
+1. 원본 URL로 대상 보드를 조회합니다.
+2. `position` 순서로 상태 열을 가져옵니다.
+3. 카드의 `column_id`를 기준으로 해당 열에 배치합니다.
+4. Supabase에서 카드 6개 조회를 확인했습니다.
+
+## 발표용 한 문장
+
+> GitHub 칸반 화면에서 반복되던 보드명·상태명·작업 정보를 분리해 Board–Column–Card 구조로 정규화했고, 외래키·제약조건·RLS를 적용해 실제 Supabase에서 조회 가능한 간반 DB를 구현했습니다.
+
+상세 ERD: [docs/kanban-erd.md](docs/kanban-erd.md)
